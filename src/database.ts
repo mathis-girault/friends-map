@@ -49,7 +49,11 @@ export default class Database {
   );
 
   constructor(mapFunction: MapFunctionAddUser) {
-    signInAnonymously(auth)
+    this.mapFunctionAddUser = mapFunction;
+  }
+
+  async signIn(): Promise<void> {
+    await signInAnonymously(auth)
       .then((userCredential) => {
         // The user is signed in anonymously
         console.log("Anonymous user ID:", userCredential.user.uid);
@@ -58,7 +62,6 @@ export default class Database {
         // Handle any errors that occur during anonymous sign-in
         console.error("Anonymous sign-in error:", error.message);
       });
-    this.mapFunctionAddUser = mapFunction;
   }
 
   async initDB(): Promise<void> {

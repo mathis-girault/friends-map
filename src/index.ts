@@ -50,46 +50,25 @@ class Main {
     );
   }
 
-  init(): void {
-    this.database
-      .initDB()
-      .then(() => {
-        this.map.changeGroup(listCategories[0]);
-        this.form.initForm();
-        this.menu.initMenuEvents();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  async init(): Promise<void> {
+    this.map.initMap();
+    await this.database.signIn();
+
+    await this.database.initDB();
+    this.map.changeGroup(listCategories[0]);
+    this.form.initForm();
+    this.menu.initMenuEvents();
   }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   const _main = new Main();
-  _main.init();
+  _main
+    .init()
+    .then(() => {
+      console.log("App initialized");
+    })
+    .catch((error) => {
+      console.error("App initialization error:", error.message);
+    });
 });
-
-// Function to init the listeners for the menu items
-// function initMenuEvents() {
-
-//   // Same on mobile devices
-//   const stageButton = document.getElementById("mobile-stage");
-//   const semester1Button = document.getElementById("mobile-semester1");
-//   const selectedMarker = document.querySelector(".selected-marker");
-
-//   stageButton.onclick = () => {
-//     stageButton.classList.add("selected");
-//     semester1Button.classList.remove("selected");
-//     selectedMarker.style.transform = "translateX(0%)";
-//     mapFunctions.displayMarkerGroup(true);
-//   };
-
-//   semester1Button.onclick = () => {
-//     stageButton.classList.remove("selected");
-//     semester1Button.classList.add("selected");
-//     selectedMarker.style.transform = "translateX(100%)";
-//     mapFunctions.displayMarkerGroup(false);
-//   };
-
-//   stageButton.dispatchEvent(new Event("click"));
-// }

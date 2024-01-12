@@ -13,7 +13,6 @@ export default class MapManager {
   private discussionViewHandler: DiscussionViewHandler;
 
   constructor() {
-    this.initMap();
     for (const group of listCategories) {
       this.allLayersGroups[group] = L.layerGroup();
       this.allMakers[group] = new Map();
@@ -25,43 +24,43 @@ export default class MapManager {
   }
 
   initMap(): void {
-    const createMap = (location: L.Point, zoom: number): void => {
-      const osmURL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-      const osmAttribution =
-        'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors';
+    const defaultLocation = new L.Point(46.96855, 2.62579);
+    const defaultZoom = 5.5;
+    const osmURL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+    const osmAttribution =
+      'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors';
 
-      this.myMap = L.map("map", { zoomSnap: 0.25 }).setView(
-        [location.x, location.y],
-        zoom
-      );
+    this.myMap = L.map("map", { zoomSnap: 0.25 }).setView(
+      [defaultLocation.x, defaultLocation.y],
+      defaultZoom
+    );
 
-      // Add classic map view
-      L.tileLayer(osmURL, {
-        maxZoom: 19,
-        minZoom: 2,
-        attribution: osmAttribution,
-      }).addTo(this.myMap);
+    // Add classic map view
+    L.tileLayer(osmURL, {
+      maxZoom: 19,
+      minZoom: 2,
+      attribution: osmAttribution,
+    }).addTo(this.myMap);
 
-      // Set max bounds for the map
-      const bounds = L.latLngBounds(L.latLng(-75, -180), L.latLng(90, 180));
-      this.myMap.setMaxBounds(bounds); // Set the maximum bounds for the map
+    // Set max bounds for the map
+    const bounds = L.latLngBounds(L.latLng(-75, -180), L.latLng(90, 180));
+    this.myMap.setMaxBounds(bounds); // Set the maximum bounds for the map
 
-      // Disable dragging of the map outside the bounds
-      this.myMap.on("drag", () => {
-        this.myMap.panInsideBounds(bounds, { animate: false });
-      });
-    };
+    // Disable dragging of the map outside the bounds
+    this.myMap.on("drag", () => {
+      this.myMap.panInsideBounds(bounds, { animate: false });
+    });
 
     // Request User's location
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        createMap(
-          new L.Point(position.coords.latitude, position.coords.longitude),
-          10
+        this.myMap.setView(
+          [position.coords.latitude, position.coords.longitude],
+          13
         );
       },
       () => {
-        createMap(new L.Point(46.96855, 2.62579), 5.5);
+        console.warn("Geolocation is not supported or user refused it");
       }
     );
   }
