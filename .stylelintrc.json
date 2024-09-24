@@ -1,0 +1,11 @@
+{
+    "extends": ["stylelint-config-standard"],
+    "rules": {
+        "color-function-notation": null,
+        "alpha-value-notation": null,
+        "selector-pseudo-element-no-unknown": [
+            true, 
+            { "ignorePseudoElements": ["ng-deep"] }
+        ]
+    }
+}

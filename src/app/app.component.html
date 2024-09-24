@@ -1,0 +1,17 @@
+<div id="map-container">
+  <div id="menu">
+    <input type="button" class="menu-button" id="add-marker" title="Add your marker" (click)="toggleForm()" />
+  </div>
+
+  <app-map></app-map>
+</div>
+
+<app-get-pwd *ngIf="showPwdForm"
+              (sendPasswordEvent)="handleGetPassword($event)"></app-get-pwd>
+
+<app-map-form *ngIf="showForm" 
+              (addMarkerEvent)="handleAddMarkerEvent($event)"
+              (closeFormEvent)="closeFormEvent()">
+            </app-map-form>
+
+<app-toast></app-toast>

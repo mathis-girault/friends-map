@@ -1,0 +1,70 @@
+<div id="form-container" (click)="onClose()" (keydown.escape)="onClose()" tabindex="0">
+    <form 
+        id="add-marker-form" 
+        [formGroup]="addMarkerForm" 
+        (ngSubmit)="onSubmit()" 
+        (click)="$event.stopPropagation()"
+        (keydown.escape)="$event.stopPropagation()"
+    >
+        <h3 id="form-title">Ajoutez votre marqueur</h3>
+
+        <div class="form-group">
+            <label for="name">Ton blaze :</label>
+            <input
+                type="text"
+                id="name"
+                formControlName="name"
+                placeholder="John Doe"
+                required
+                autocomplete="name"
+            />
+        </div>
+
+        <div class="form-group">
+            <label for="address">Ton adresse :</label>
+            
+            <div>
+                <div>
+                    <input type="radio" formControlName="country" id="address-france" value="france" />
+                    <label for="address-france">France</label>
+                    <input type="radio" formControlName="country" id="address-other" value="autre" />
+                    <label for="address-other">Autre</label>
+                </div>
+            </div>
+            
+            <input
+                type="text"
+                id="address"
+                formControlName="address"
+                placeholder="Adresse, Ville"
+                (input)="handleSuggestions()"
+                required
+                autocomplete="address-level1"
+            />
+            <div id="suggestions">
+                <div
+                    *ngFor="let suggestion of suggestions"
+                    class="suggestion-elem"
+                    (click)="selectSuggestion(suggestion)"
+                    (keydown.enter)="selectSuggestion(suggestion)"
+                    tabindex="1"
+                >
+                    {{ suggestion }}
+                </div>
+            </div>
+        </div>
+
+        <div id="form-submit">
+            <input
+                type="button"
+                id="annuler"
+                class="form-button"
+                (click)="onClose()"
+                value="Annuler"
+            />
+            <button type="submit" class="form-button" id="add-marker-submit">
+                Ajouter
+            </button>
+        </div>
+    </form>
+</div>

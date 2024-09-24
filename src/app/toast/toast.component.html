@@ -1,0 +1,21 @@
+<div id="toaster">
+    <div *ngFor="let toast of toastService.toasts" class="toast" [ngClass]="toast.type">
+        <div
+            class="toast-close" 
+            (click)="remove(toast)"
+            (keydown.enter)="remove(toast)"
+            tabindex="0"
+        >
+            &times;
+        </div>
+        <span class="toast-separator"></span>
+        <div
+            class="toast-body"
+            (click)="remove(toast)"
+            (keypress.enter)="remove(toast)"
+            tabindex="1"
+        >
+            {{ toast.message }}
+        </div>
+    </div>
+</div>

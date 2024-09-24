@@ -1,0 +1,26 @@
+<div id="get-pwd-form-container">
+    <form
+        id="get-pwd-form" 
+        [formGroup]="getPwdForm" 
+        (ngSubmit)="onSubmit()"
+    >
+        <h3 id="form-title">Entrez le mot de passe pour acceder au site</h3>
+
+        <div id="get-pwd-form-content">
+            <div class="form-group">
+                <input
+                    type="text"
+                    id="password"
+                    formControlName="password"
+                    required
+                />
+            </div>
+
+            <div id="get-pwd-form-submit">
+                <button type="submit" class="form-button" id="get-pwd-submit">
+                    Envoyer
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
