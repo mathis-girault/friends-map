@@ -11,9 +11,9 @@ interface EncryptedData {
 }
 
 const encryptedKey: EncryptedData = {
-  ciphertext: "6d1e8cfdcf132a675ffe4e5213d4679ad0472ad9d95a779802755ecc89723ab456ca618a4d8b4b25b2858bf7fa06363e",
-  iv: "bf9523ca31fbdb0d3452d63d36d7a0b4",
-  salt: "78cd6628d7bbee9c75d9c40e61072c90"
+  ciphertext: "276a511d4fab461d9421b7c30c474bab0e1727cb70811c69684011c01bc0161c544d8078067332ba11b040650af67a9b",
+  iv: "14f1c3a7e1df9bab5a561f092025936e",
+  salt: "882b84a8b8cbf784598b09cf9c7cb8f4"
 }
 
 @Component({
@@ -94,7 +94,7 @@ function decryptApiKey(encryptedData: EncryptedData, secret: string): string | n
 }
 
 // For legacy purposes, function used to encrypt the API key
-/** 
+/**
   function encryptApiKey(apiKey: string, secret: string) {
     const salt = CryptoJS.lib.WordArray.random(128 / 8); // Generate a random salt
     const key = CryptoJS.PBKDF2(secret, salt, {

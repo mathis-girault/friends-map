@@ -38,6 +38,7 @@ export class AppComponent {
   async handleGetPassword(event: string): Promise<void> {
     this.databaseService.initApp(event).then(() => {
       // Successfull authentication to firebase
+      console.log("Successfully authenticated to Firebase");
       this.toastService.addToast('success', "Bienvenue sur l'application !");
       this.showPwdForm = false;
       this.mapComponent.initMarkers();
