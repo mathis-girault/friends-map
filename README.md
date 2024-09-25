@@ -5,6 +5,11 @@ Ce site permet de voir, sur une carte, des positions ajoutées par des personnes
 
 ## Informations 
 
+### Protection
+
+Le site est protégé par un mot de passe.
+Ce mot de passe permet de déchiffrer la clé d'API nécessaire pour récupérer et stocker les données.
+
 ### Utilisation
 
 Vous disposez à l'écran d'une carte, et de marqueurs qui s'affichent sur la carte.
