@@ -34,8 +34,8 @@ export class MapComponent implements OnInit {
   }
 
   private initMap(): void {
-    const defaultLocation = new L.Point(46.96855, 2.62579);
-    const defaultZoom = 5.5;
+    const defaultLocation = new L.Point(48.866667, 2.333333);
+    const defaultZoom = 11;
     const osmURL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
     const osmAttribution =
       'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors';

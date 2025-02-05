@@ -16,6 +16,8 @@ const encryptedKey: EncryptedData = {
   salt: "882b84a8b8cbf784598b09cf9c7cb8f4"
 }
 
+const CACHE_TOKEN = 'cachedPasswordFriendsMap';
+
 @Component({
   selector: 'app-get-pwd',
   standalone: true,
@@ -38,6 +40,23 @@ export class GetPwdComponent {
     });
   }
 
+  ngOnInit(): void {
+    this.checkCachedPassword();
+  }
+
+  checkCachedPassword(): void {
+    try {
+      const cachedPassword = localStorage.getItem(CACHE_TOKEN);
+      if (cachedPassword != null) {
+        const decryptedApiKey = this.decryptKey(cachedPassword);
+        this.sendPasswordEvent.emit(decryptedApiKey);
+        this.toastService.addToast('success', "Mot de passe récupéré depuis le cache");
+      } 
+    } catch (error) {
+      localStorage.removeItem(CACHE_TOKEN);
+    }
+  }
+
   // Handle the form submission
   onSubmit(): void {
     const formData = this.getPwdForm.value;
@@ -45,6 +64,7 @@ export class GetPwdComponent {
     try {
       const decryptedApiKey = this.decryptKey(formData.password);
       this.sendPasswordEvent.emit(decryptedApiKey)
+      localStorage.setItem(CACHE_TOKEN, formData.password);
     } catch (error) {
       this.toastService.addToast('error', "Le mot de passe est incorrect");
     }
