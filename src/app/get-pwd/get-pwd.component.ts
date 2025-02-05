@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../service/toast.service';
@@ -25,7 +25,7 @@ const CACHE_TOKEN = 'cachedPasswordFriendsMap';
   templateUrl: './get-pwd.component.html',
   styleUrl: './get-pwd.component.css'
 })
-export class GetPwdComponent {
+export class GetPwdComponent implements OnInit {
   getPwdForm: FormGroup;
 
   @Output() sendPasswordEvent = new EventEmitter<string>();
