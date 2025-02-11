@@ -3,11 +3,6 @@
     width: 100%;
 }
 
-#netlify-modal {
-    position: absolute;
-    z-index: 9999 !important;
-}
-
 #menu {
     position: absolute;
     z-index: 2000;
@@ -34,4 +29,25 @@
     background-repeat: no-repeat;
     background-size: 70%;
     background-position: center;
+}
+
+#journey-planner {
+    background-image: url("./../assets/journey.png");
+    background-repeat: no-repeat;
+    background-size: 70%;
+    background-position: center;
+}
+
+/* Styles for phones */
+@media (max-width: 750px) {
+    #menu {
+        bottom: 10px;
+        left: 10px;
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .menu-button {
+        margin: 5px;
+    }
 }

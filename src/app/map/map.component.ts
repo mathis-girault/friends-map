@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import * as L from 'leaflet';
-import { MapFormComponent } from "../map-form/map-form.component";
 import { DatabaseService } from '../service/database.service';
 
 interface MarkerInfos {
@@ -19,11 +18,14 @@ export interface MarkerData {
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [MapFormComponent],
+  imports: [],
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
+  @Output() originSelected = new EventEmitter<MarkerData>();
+  @Output() destSelected = new EventEmitter<MarkerData>();
+
   private map: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   private readonly allMakers: Map<string, MarkerInfos> = new Map();
 
@@ -111,7 +113,7 @@ export class MapComponent implements OnInit {
     markerInfos.marker.setIcon(markerIcon);
 
     // Update popup content
-    const newContent = getPopupHtml(data.address, markerInfos.nameList.join(", "));
+    const newContent = this.getPopupHtml(data, markerInfos.nameList.join(", "));
     markerInfos.marker.setPopupContent(newContent);
   }
 
@@ -127,13 +129,51 @@ export class MapComponent implements OnInit {
     this.allMakers.set(key, { marker, address: data.address, nameList: [data.name] });
     
     // Set the popup content
-    const content = getPopupHtml(data.address, data.name);
+    const content = this.getPopupHtml(data, data.name);
     marker.bindPopup(content, { className: "custom-popup" });
+
+    marker.on('popupopen', () => {
+      const popupElement = marker.getPopup()?.getElement();
+      if (popupElement) {
+        const originButton = popupElement.querySelector('.button-origin');
+        const destButton = popupElement.querySelector('.button-dest');
+
+        if (originButton) {
+          originButton.removeEventListener('click', () => this.handleOriginClick);
+          originButton.addEventListener('click', () => this.handleOriginClick(data));
+        }
+
+        if (destButton) {
+          destButton.removeEventListener('click', () => this.handleDestinationClick);
+          destButton.addEventListener('click', () => this.handleDestinationClick(data));
+        }
+      }
+    });
   }
 
   public handleAddMarkerEvent(data: MarkerData): void {
     this.addMarker(data);
     this.databaseService.addMarker(data);
+  }
+
+  private getPopupHtml(data: MarkerData, nameList: string): string {
+    return `
+      <h4>${data.address}</h4>
+      <hr />
+      <p class="popup-desc">${nameList}</p>
+      <div class="popup-button-container">
+        <button class="popup-button button-origin">Partir de</button>
+        <button class="popup-button button-dest">Aller à</button>
+      </div>
+    `;
+  }
+
+  private handleOriginClick(data: MarkerData): void {
+    this.originSelected.emit(data);
+  }
+
+  private handleDestinationClick(data: MarkerData): void {
+    this.destSelected.emit(data);
   }
 }
 
@@ -147,13 +187,4 @@ function getIconHtml(number: string): string {
 
   return `<img src="${iconUri}" width="${iconOptions.iconSize[0]}" height="${iconOptions.iconSize[1]}"/>
 	<div class="marker-number">${number}</div>`;
-}
-
-function getPopupHtml(address: string, nameList: string): string {
-  return `
-    <h4>${address}</h4>
-    <hr />
-    <p class="popup-desc">${nameList}</p>
-  `;
-  // <input type="button" class="popup-button" value="Discussion" />
 }

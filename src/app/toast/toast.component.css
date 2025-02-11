@@ -30,3 +30,10 @@
 .toast.success {
     background-color: rgb(30, 146, 30);
 }
+
+/* Styles for phones */
+@media (max-width: 750px) {
+    .toast {
+        font-size: small;
+    }
+}

@@ -6,37 +6,60 @@ import { CommonModule } from '@angular/common';
 import { GetPwdComponent } from './get-pwd/get-pwd.component';
 import { DatabaseService } from './service/database.service';
 import { ToastService } from './service/toast.service';
+import { JourneyFormComponent } from './journey-form/journey-form.component';
+import { JourneyService } from './service/journey.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MapComponent, MapFormComponent, ToastComponent, CommonModule, GetPwdComponent],
+  imports: [MapComponent, MapFormComponent, ToastComponent, CommonModule, GetPwdComponent, JourneyFormComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  showForm: boolean = false;
+  showFormMarker: boolean = false;
+  showFormJourney: boolean = false;
   showPwdForm: boolean = true;
 
   @ViewChild(MapComponent) mapComponent!: MapComponent;
+  @ViewChild(JourneyFormComponent) journeyFormComponent!: JourneyFormComponent;
 
-  constructor(private databaseService: DatabaseService, private toastService: ToastService) {}
+  constructor(
+    private databaseService: DatabaseService,
+    private journeyService: JourneyService,
+    private toastService: ToastService) {}
 
-  toggleForm(): void {
-    this.showForm = !this.showForm;
+  toggleFormMarker(): void {
+    this.showFormMarker = !this.showFormMarker;
+    this.showFormJourney = false;
   }
   
   handleAddMarkerEvent(event: MarkerData): void {
     this.mapComponent.handleAddMarkerEvent(event);
-    this.showForm = false;
+    this.showFormMarker = false;
   }
 
-  closeFormEvent(): void {
-    this.showForm = false;
+  closeFormMarkerEvent(): void {
+    this.showFormMarker = false;
   }
 
-  async handleGetPassword(event: string): Promise<void> {
-    this.databaseService.initApp(event).then(() => {
+  toggleJourneyForm(): void {
+    this.showFormJourney = !this.showFormJourney;
+    this.showFormMarker = false;
+  }
+
+  closeMapFormEvent(): void {
+    // this.showFormJourney = false;
+    this.showFormMarker = false;
+  }
+
+  closeJourneyFormEvent(): void {
+    // this.showFormJourney = false;
+    this.showFormJourney = false;
+  }
+
+  async handleGetPassword(event: { firebaseApiKey: string, IDFMobiApiKey: string }): Promise<void> {
+    this.databaseService.initApp(event.firebaseApiKey).then(() => {
       // Successfull authentication to firebase
       console.log("Successfully authenticated to Firebase");
       this.toastService.addToast('success', "Bienvenue sur l'application !");
@@ -47,5 +70,18 @@ export class AppComponent {
       console.error("Failed to authenticate to Firebase");
       this.toastService.addToast('error', "Erreur de communication avec la base de données");
     });
+    this.journeyService.initApp(event.IDFMobiApiKey);
+  }
+
+  onOriginSelected(event: MarkerData): void {
+    this.showFormJourney = true;
+    this.showFormMarker = false;
+    this.journeyFormComponent.handleOriginSelected(event);
+  }
+
+  onDestSelected(event: MarkerData): void {
+    this.showFormJourney = true;
+    this.showFormMarker = false;
+    this.journeyFormComponent.handleDestSelected(event);
   }
 }

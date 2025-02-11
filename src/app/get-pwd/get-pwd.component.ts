@@ -10,10 +10,22 @@ interface EncryptedData {
   ciphertext: string;
 }
 
-const encryptedKey: EncryptedData = {
-  ciphertext: "276a511d4fab461d9421b7c30c474bab0e1727cb70811c69684011c01bc0161c544d8078067332ba11b040650af67a9b",
-  iv: "14f1c3a7e1df9bab5a561f092025936e",
-  salt: "882b84a8b8cbf784598b09cf9c7cb8f4"
+const encryptedBaseKey: EncryptedData = {
+  ciphertext: "5466e0fd34ac523bf8efa977854afda752d45de5fd5fabf6052e0a922bd41263262a336314d9707d8714e9fb7a3c29b5ba8acaa9851162bcac589d86a45b715ace33c5c5f3f3bd26e26b0544fec260647afdc3e6b1281f0bb58170696b95e3f6d9b238750711dceaea2447335d2e0a4b2920151c1606034185c0adf6c79b905bc68255c571aae8a4b5ce60ed8be58b88",
+  iv: "5a2f327ad12cac0dddc984458b2e2340",
+  salt: "f1ce9d7b217f95b3a3b68fb2e172848b"
+}
+
+const encryptedFirebaseKey: EncryptedData = {
+  ciphertext: "c8650931d7a8f62e2516f164b9822370dd3fb5711d7025f87a768336b48165330a6019618410fb41267d3035b7f6fd59",
+  iv: "c1392da85a93493da52dae8f496b811c",
+  salt: "234d1f9d40c88b74ff0c13758ca3361f"
+}
+
+const encryptedIDFMobiKey: EncryptedData = {
+  ciphertext: "888113fb8a080d9eda0f7f8a07f758fd18dff3d66dc5b3f9459744bd09d0c5ebafdc4c992b9123b216ad797999237665",
+  iv: "5e5059e8fb00980d6a8f9525df371009",
+  salt: "2315578498f2448bf75da885f8779bfe"
 }
 
 const CACHE_TOKEN = 'cachedPasswordFriendsMap';
@@ -28,7 +40,7 @@ const CACHE_TOKEN = 'cachedPasswordFriendsMap';
 export class GetPwdComponent implements OnInit {
   getPwdForm: FormGroup;
 
-  @Output() sendPasswordEvent = new EventEmitter<string>();
+  @Output() sendPasswordEvent = new EventEmitter<{ firebaseApiKey: string, IDFMobiApiKey: string }>();
 
   constructor(
     private fb: FormBuilder, 
@@ -48,8 +60,9 @@ export class GetPwdComponent implements OnInit {
     try {
       const cachedPassword = localStorage.getItem(CACHE_TOKEN);
       if (cachedPassword != null) {
-        const decryptedApiKey = this.decryptKey(cachedPassword);
-        this.sendPasswordEvent.emit(decryptedApiKey);
+        const decryptedKey = this.decryptApiKey(encryptedBaseKey, cachedPassword);
+        
+        this.decryptAndSendKeys(decryptedKey);
         this.toastService.addToast('success', "Mot de passe récupéré depuis le cache");
       } 
     } catch (error) {
@@ -62,17 +75,31 @@ export class GetPwdComponent implements OnInit {
     const formData = this.getPwdForm.value;
 
     try {
-      const decryptedApiKey = this.decryptKey(formData.password);
-      this.sendPasswordEvent.emit(decryptedApiKey)
+      const decryptedApiKey = this.decryptApiKey(encryptedBaseKey, formData.password);
+      this.decryptAndSendKeys(decryptedApiKey);
       localStorage.setItem(CACHE_TOKEN, formData.password);
     } catch (error) {
       this.toastService.addToast('error', "Le mot de passe est incorrect");
     }
   }
 
+  decryptAndSendKeys(password: string): void {
+    try {
+      const decryptedFirebaseKey = this.decryptApiKey(encryptedFirebaseKey, password);
+      const decryptedIDFMobiKey = this.decryptApiKey(encryptedIDFMobiKey, password);
+
+      this.sendPasswordEvent.emit({
+        firebaseApiKey: decryptedFirebaseKey,
+        IDFMobiApiKey: decryptedIDFMobiKey
+      });
+    } catch (error) {
+      this.toastService.addToast('error', "Le mot de passe est incorrect");
+    }
+  }
+
   // Decrypt the API key using the password, throws an error if decryption fails
-  decryptKey(password: string): string {
-    const decryptedKey = decryptApiKey(encryptedKey, password);
+  decryptApiKey(crypted: EncryptedData, password: string): string {
+    const decryptedKey = decryptKey(crypted, password);
     if (decryptedKey === null) {
       console.error("Decryption failed");
       throw new Error;
@@ -82,7 +109,7 @@ export class GetPwdComponent implements OnInit {
   }
 }
 
-function decryptApiKey(encryptedData: EncryptedData, secret: string): string | null {
+function decryptKey(encryptedData: EncryptedData, secret: string): string | null {
   // Parse the salt, IV, and ciphertext from hexadecimal strings back to WordArray
   const salt = CryptoJS.enc.Hex.parse(encryptedData.salt);
   const iv = CryptoJS.enc.Hex.parse(encryptedData.iv);
@@ -114,26 +141,25 @@ function decryptApiKey(encryptedData: EncryptedData, secret: string): string | n
 }
 
 // For legacy purposes, function used to encrypt the API key
-/**
-  function encryptApiKey(apiKey: string, secret: string) {
-    const salt = CryptoJS.lib.WordArray.random(128 / 8); // Generate a random salt
-    const key = CryptoJS.PBKDF2(secret, salt, {
-        keySize: 256 / 32,
-        iterations: 10000,
-    });
+/* function encryptApiKey(apiKey: string, secret: string) {
+  const salt = CryptoJS.lib.WordArray.random(128 / 8); // Generate a random salt
+  const key = CryptoJS.PBKDF2(secret, salt, {
+      keySize: 256 / 32,
+      iterations: 10000,
+  });
 
-    const iv = CryptoJS.lib.WordArray.random(128 / 8); // Random Initialization Vector
-    const encrypted = CryptoJS.AES.encrypt(apiKey, key, {
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-    });
+  const iv = CryptoJS.lib.WordArray.random(128 / 8); // Random Initialization Vector
+  const encrypted = CryptoJS.AES.encrypt(apiKey, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+  });
 
-    // Return an object containing salt, IV, and ciphertext as hexadecimal strings
-    return {
-        salt: salt.toString(CryptoJS.enc.Hex),
-        iv: iv.toString(CryptoJS.enc.Hex),
-        ciphertext: encrypted.ciphertext.toString(CryptoJS.enc.Hex),
-    };
-  }
-*/
+  // Return an object containing salt, IV, and ciphertext as hexadecimal strings
+  return {
+      salt: salt.toString(CryptoJS.enc.Hex),
+      iv: iv.toString(CryptoJS.enc.Hex),
+      ciphertext: encrypted.ciphertext.toString(CryptoJS.enc.Hex),
+  };
+} */
+

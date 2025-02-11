@@ -1,17 +1,24 @@
 <div id="map-container">
   <div id="menu">
-    <input type="button" class="menu-button" id="add-marker" title="Add your marker" (click)="toggleForm()" />
+    <input type="button" class="menu-button" id="add-marker" title="Add your marker" (click)="toggleFormMarker()" />
+    <input type="button" class="menu-button" id="journey-planner" title="Plan your journey" (click)="toggleJourneyForm()" />
   </div>
 
-  <app-map></app-map>
+  <app-map (originSelected)="onOriginSelected($event)"
+          (destSelected)="onDestSelected($event)">
+  </app-map>
 </div>
 
 <app-get-pwd *ngIf="showPwdForm"
               (sendPasswordEvent)="handleGetPassword($event)"></app-get-pwd>
 
-<app-map-form *ngIf="showForm" 
+<app-map-form *ngIf="showFormMarker"
               (addMarkerEvent)="handleAddMarkerEvent($event)"
-              (closeFormEvent)="closeFormEvent()">
+              (closeFormEvent)="closeMapFormEvent()">
             </app-map-form>
+
+<app-journey-form [hidden]="!showFormJourney"
+              (closeJourneyFormEvent)="closeJourneyFormEvent()">
+            </app-journey-form>
 
 <app-toast></app-toast>
