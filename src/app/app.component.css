@@ -39,7 +39,7 @@
 }
 
 /* Styles for phones */
-@media (max-width: 750px) {
+@media (width <= 750px) {
     #menu {
         bottom: 10px;
         left: 10px;
