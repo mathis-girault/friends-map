@@ -92,7 +92,7 @@
                                 {{ formatDuration(result.duration) }}
                             </span>
 
-                            <span *ngIf="result.status" class="additionnal-info" [attr.title]="result.status">
+                            <span *ngIf="result.status" class="additionnal-info" [attr.title]="result.status" (click)="displayWarning(result.status)" tabindex="2" (keydown)="displayWarning(result.status)">
                                 <img src="assets/warning.png" alt="Warning" class="icon" />
                             </span>
                         </span>

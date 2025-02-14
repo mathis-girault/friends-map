@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ToastService } from '../service/toast.service';
+import { Toast, ToastService } from '../service/toast.service';
 
 @Component({
   selector: 'app-toast',
@@ -12,7 +12,7 @@ import { ToastService } from '../service/toast.service';
 export class ToastComponent {
   constructor(public toastService: ToastService) {}
 
-  remove(toast: { message: string, type: 'error' | 'success' }) {
+  remove(toast: Toast) {
     this.toastService.removeToast(toast);
   }
 }

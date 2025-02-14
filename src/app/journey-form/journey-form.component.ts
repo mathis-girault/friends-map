@@ -95,4 +95,8 @@ export class JourneyFormComponent {
   isTrain(commercialMode: string): boolean {
     return commercialMode.startsWith('Train') || commercialMode === 'RER';
   }
+
+  displayWarning(warning: string): void {
+    this.toastService.addToast('warning', warning);
+  }
 }

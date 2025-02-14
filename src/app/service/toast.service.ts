@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-interface Toast {
-  type: 'success' | 'error';
+export interface Toast {
+  type: 'success' | 'warning' | 'error';
   message: string;
 }
 
@@ -12,7 +12,7 @@ export class ToastService {
   toasts: Toast[] = [];
 
   // Add a new toast notification
-  addToast(type: 'success' | 'error', message: string, duration: number = 5000) {
+  addToast(type: Toast['type'], message: Toast['message'], duration: number = 5000) {
     const toastToAdd = { type, message };
     this.toasts.push(toastToAdd);
 
