@@ -170,10 +170,12 @@ export class MapComponent implements OnInit {
 
   private handleOriginClick(data: MarkerData): void {
     this.originSelected.emit(data);
+    this.map.closePopup();
   }
 
   private handleDestinationClick(data: MarkerData): void {
     this.destSelected.emit(data);
+    this.map.closePopup();
   }
 }
 
