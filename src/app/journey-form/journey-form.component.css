@@ -103,10 +103,26 @@
     border-radius: 5px;
 }
 
+.result-section {
+    vertical-align: middle;
+}
+
 .icon {
     width: 20px;
     height: 20px;
     vertical-align: middle;
+}
+
+.walking-icon {
+    width: 12px;
+    height: 18px;
+    vertical-align: middle;
+    margin-left: 3px;
+}
+
+.walking-sub {
+    font-size: small;
+    font-weight: bold;
 }
 
 .result-timeline {

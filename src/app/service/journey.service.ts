@@ -15,6 +15,7 @@ export type PRIM_IDF_JOURNEY = {
     sections: {
         type: string;
         mode: string;
+        duration: number;
         display_informations: {
           commercial_mode: string;
           label: string;
@@ -29,7 +30,7 @@ export type PRIM_IDF_JOURNEY = {
 })
 export class JourneyService {
   private API_KEY: string | null = null;
-  private readonly API_URL = "https://prim.iledefrance-mobilites.fr/marketplace/v2/navitia/journeys?count=3&traveler_type=fast_walker";
+  private readonly API_URL = "https://prim.iledefrance-mobilites.fr/marketplace/v2/navitia/journeys?count=4&traveler_type=fast_walker";
 
   constructor(private http: HttpClient) {}
 

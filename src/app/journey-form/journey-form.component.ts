@@ -66,6 +66,7 @@ export class JourneyFormComponent {
     journeys.forEach((journey: PRIM_IDF_JOURNEY) => {
         journey.sections = journey.sections.filter((section) => section.type === 'public_transport' || section.mode === 'walking');
     });
+    journeys.pop(); // get 4 journeys and remove last
     console.info("API results: ", journeys);
     this.results = journeys;
   }
@@ -90,6 +91,10 @@ export class JourneyFormComponent {
     const formattedMinutes = (minutes > 0 || (hours > 0 && seconds > 0)) ? (hours > 0 ? String(minutes).padStart(2, '0') : minutes) + 'min' : '';
 
     return `${formattedHours}${formattedMinutes}`.trim();
+  }
+
+  durationToMinutes(duration: number): number {
+    return Math.floor(duration / 60);
   }
 
   isTrain(commercialMode: string): boolean {

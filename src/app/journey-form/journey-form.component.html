@@ -79,7 +79,8 @@
                                 <ng-template #defaultMode>
                                     <ng-container [ngSwitch]="section.mode">
                                         <span class="result-section" *ngSwitchCase="'walking'">
-                                            <img src="assets/walking.png" alt="Walking" class="icon" />
+                                            <img src="assets/walking.png" alt="Walking" class="walking-icon" />
+                                            <sub class="walking-sub">{{ durationToMinutes(section.duration)}}</sub>
                                         </span>
                                     </ng-container>
                                 </ng-template>
