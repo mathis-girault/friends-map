@@ -123,6 +123,8 @@
 .walking-sub {
     font-size: small;
     font-weight: bold;
+    bottom: -0.2em;
+    position: relative;
 }
 
 .result-timeline {
@@ -158,5 +160,9 @@
 
     #results {
         font-size: smaller;
+    }
+
+    .walking-sub {
+        font-size: x-small;
     }
 }
