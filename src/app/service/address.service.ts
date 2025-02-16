@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
 import * as L from 'leaflet';
 
 type GOUV_API_DATA = {
@@ -23,7 +22,7 @@ type NOMINATIM_API_DATA = {
 })
 export class AddressService {
   private readonly BASE_GOUV_URL = 'https://api-adresse.data.gouv.fr/search/?limit=5';
-  private readonly BASE_NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
+  private readonly BASE_NOMINATIM_URL = "https://nominatim.openstreetmap.org/search?format=geojson&limit=1";
 
   constructor(private http: HttpClient) {}
 
@@ -37,24 +36,25 @@ export class AddressService {
     return this.http.get<{ features: GOUV_API_DATA[] }>(url);
   }
 
-  getPosition(address: string): Observable<L.Point | null> {
-    const baseUrl = "https://nominatim.openstreetmap.org/search";
-  
-    return this.http.get<NOMINATIM_API_DATA>(`${baseUrl}?format=geojson&limit=1&q=${address}`).pipe(
-      map(response => {
-        if (response.features.length > 0) {
-          return new L.Point(
-            parseFloat(response.features[0].geometry.coordinates[1].toString()),
-            parseFloat(response.features[0].geometry.coordinates[0].toString())
-          );
-        } else {
-          throw new Error("Aucune adresse ne correspond à votre recherche");
-        }
-      }),
-      catchError(error => {
-        console.error('Error:', error);
-        return of(null);
-      })
-    );
+  getPosition(address: string): Promise<L.Point> {
+    return new Promise((resolve, reject) => {
+      this.http.get<NOMINATIM_API_DATA>(`${this.BASE_NOMINATIM_URL}&q=${address}`).subscribe({
+        next: (response) => {
+          if (response.features.length > 0) {
+            const pos = new L.Point(
+              parseFloat(response.features[0].geometry.coordinates[1].toString()),
+              parseFloat(response.features[0].geometry.coordinates[0].toString())
+            );
+            resolve(pos);
+          } else {
+            reject(new Error("Aucune adresse ne correspond à votre recherche"));
+          }
+        },
+        error: (error) => {
+          console.log("Error: ", error);
+          reject(error);
+        },
+      });
+    });
   }
 }

@@ -75,21 +75,15 @@ export class MapFormComponent {
   onSubmit(): void {
     if (this.addMarkerForm.valid) {
       const formValue = this.addMarkerForm.value;
-      this.addressService.getPosition(formValue.address).subscribe({
-        next: (response) => {
-          if (!response) {
-            return;
-          }
-          this.addMarkerEvent.emit({
-            name: formValue.name,
-            address: formValue.address,
-            x: response.x,
-            y: response.y
-          });
-        },
-        error: (error) => {
-          this.toastService.addToast('error', error.message, 5000);
-        }
+      this.addressService.getPosition(formValue.address).then((response) => {
+        this.addMarkerEvent.emit({
+          name: formValue.name,
+          address: formValue.address,
+          x: response.x,
+          y: response.y
+        });
+      }).catch((error) => {
+        this.toastService.addToast('error', error.message, 5000);
       });
     }
   }

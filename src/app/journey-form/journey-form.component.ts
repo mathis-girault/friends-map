@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../service/toast.service';
 import { JourneyService, type PRIM_IDF_API_RESULT, type PRIM_IDF_JOURNEY } from '../service/journey.service';
 import { MarkerData } from '../map/map.component';
+import { AddressService } from '../service/address.service';
 
 @Component({
   selector: 'app-journey-form',
@@ -12,7 +13,7 @@ import { MarkerData } from '../map/map.component';
   templateUrl: './journey-form.component.html',
   styleUrls: ['./journey-form.component.css']
 })
-export class JourneyFormComponent {
+export class JourneyFormComponent implements OnInit {
   addJourneyForm: FormGroup;
   origin: MarkerData | null = null;
   dest: MarkerData | null = null;
@@ -23,12 +24,26 @@ export class JourneyFormComponent {
   constructor(
     private fb: FormBuilder, 
     private toastService: ToastService,
-    private journeyService: JourneyService
+    private journeyService: JourneyService,
+    private addressService: AddressService
   ) {
-    // Initialize the form with form controls and validators
     this.addJourneyForm = this.fb.group({
       origin: ['', Validators.required],
       dest: ['', Validators.required],
+    });
+  }
+
+  ngOnInit(): void {
+    this.addJourneyForm.get('origin')?.valueChanges.subscribe(value => {
+      if (value) {
+        this.origin = null;
+      }
+    });
+
+    this.addJourneyForm.get('dest')?.valueChanges.subscribe(value => {
+      if (value) {
+        this.dest = null;
+      }
     });
   }
 
@@ -42,7 +57,9 @@ export class JourneyFormComponent {
     this.results = [];
   }
 
-  toggleSearch(): void {
+  async toggleSearch(): Promise<void> {
+    await this.handleUserInputs();
+
     if (this.origin && this.dest) {
       if (this.origin.name === this.dest.name) {
         this.toastService.addToast('error', 'Les deux points de départ et d\'arrivée sont identiques');
@@ -58,6 +75,35 @@ export class JourneyFormComponent {
       }
     } else {
       this.toastService.addToast('error', 'Veuillez sélectionner un point de départ et un point d\'arrivée');
+    }
+  }
+
+  async handleUserInputs() {
+    if (!this.origin) {
+      const userOrigin = this.addJourneyForm.get('origin')?.value;
+      await this.addressService.getPosition(userOrigin).then((pos) => {
+        this.origin = {
+          name: "User search",
+          address: userOrigin,
+          x: pos.x,
+          y: pos.y
+        };
+      }).catch((error) => {
+        this.toastService.addToast('error', `Une erreur est survenue : \n${error.message}`);
+      });
+    }
+    if (!this.dest) {
+      const userDest = this.addJourneyForm.get('dest')?.value;
+      await this.addressService.getPosition(userDest).then((pos) => {
+        this.dest = {
+          name: "User search",
+          address: userDest,
+          x: pos.x,
+          y: pos.y
+        };
+      }).catch((error) => {
+        this.toastService.addToast('error', `Une erreur est survenue : \n${error.message}`);
+      });
     }
   }
 
