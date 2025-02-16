@@ -1,21 +1,28 @@
 # Où sont mes amis ?
 
 [Site web : carte](https://mathis-girault.github.io/friends-map)  
-Ce site permet de voir, sur une carte, des positions ajoutées par des personnes.
+Ce site permet de voir, sur une carte, des positions ajoutées par des personne et de calculer des trajets dans Paris.
 
 ## Informations 
 
 ### Protection
 
 Le site est protégé par un mot de passe.
-Ce mot de passe permet de déchiffrer la clé d'API nécessaire pour récupérer et stocker les données.
+Ce mot de passe permet de déchiffrer les clés d'API nécessaires pour récupérer et stocker les données.
 
 ### Utilisation
+
+##### Adresses
 
 Vous disposez à l'écran d'une carte, et de marqueurs qui s'affichent sur la carte.
 En haut à gauche un bouton permet d'ouvrir un formulaire pour ajouter une nouvelle adresse, comportant un nom, et une adresse postale. Si l'adresse postale est déclarée comme en France, des suggestions d'adresses apparaissent à l'écran (issues de l'API du gouvernement).
 
 Sur la carte, vous pouvez cliquer sur un marqueur pour voir quels noms sont liés à ce lieu (les personnes ayant ajoutées cette adresse).
+
+##### Intineraires
+
+Un calculateur d'itineraire est intégré, utilisant l'API publique de Ile de france mobilités. Cela permet de calculer des trajets en ile de france.
+Pour cela, il est possible d'utiliser un marqueur existant comme point de départ ou d'arrivée, ainsi que de saisir manuellement une adresse.
 
 ### Données
 
