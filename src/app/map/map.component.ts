@@ -13,6 +13,7 @@ export interface MarkerData {
   address: string;
   x: number;
   y: number;
+  color?: string;
 }
 
 @Component({
@@ -108,7 +109,8 @@ export class MapComponent implements OnInit {
     markerInfos.nameList.push(data.name);
     const markerIcon = markerInfos.marker.getIcon() as L.DivIcon;
     markerIcon.options.html = getIconHtml(
-      markerInfos.nameList.length.toString()
+      markerInfos.nameList.length.toString(),
+      data.color
     );
     markerInfos.marker.setIcon(markerIcon);
 
@@ -118,7 +120,7 @@ export class MapComponent implements OnInit {
   }
 
   private createNewMarker(key: string, data: MarkerData) {
-    const markerIcon = getIconHtml("");
+    const markerIcon = getIconHtml("", data.color);
     const marker = L.marker([data.x, data.y], {
       icon: L.divIcon({
         className: "custom-marker",
@@ -184,8 +186,8 @@ const iconOptions = {
   iconAnchor: new L.Point(19, 35),
 };
 
-function getIconHtml(number: string): string {
-  const iconUri = `assets/marker_red${number === "" ? "" : "_full"}.png`;
+function getIconHtml(number: string, color: string = "red"): string {
+  const iconUri = `assets/marker_${color}${number === "" ? "" : "_full"}.png`;
 
   return `<img src="${iconUri}" width="${iconOptions.iconSize[0]}" height="${iconOptions.iconSize[1]}"/>
 	<div class="marker-number">${number}</div>`;
