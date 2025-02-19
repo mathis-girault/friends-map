@@ -1,41 +1,43 @@
 <div id="form-journey-container" (click)="onClose()" (keydown.escape)="onClose()" tabindex="0">
-    <form 
-        id="add-journey-form" 
-        [formGroup]="addJourneyForm" 
+    <div 
+        id="add-journey-form"
+        tabindex="1"
         (click)="$event.stopPropagation()"
         (keydown.escape)="$event.stopPropagation()"
-    >
-        <div id="journey-form-header">
-            <h3 id="form-title">Planifiez votre trajet</h3>
-            <button id="close-form" class="menu-button" title="Close" (click)="onClose()"></button>
-        </div>
-
-        <div id="journey-content-container">
-            <div id="journey-inputs-container">
-                <div class="form-journey-group">
-                    <input
-                    type="text"
-                    id="journey-origin"
-                    formControlName="origin"
-                    placeholder="Départ (choisissez un marqueur ou entrez une adresse)"
-                    required
-                    value="{{ [origin?.address] }}"
-                />
-                </div>
-            
-                <div class="form-journey-group">
-                    <input
-                    type="text"
-                    id="journey-dest"
-                    formControlName="dest"
-                    placeholder="Arrivée (choisissez un marqueur ou entrez une adresse)"
-                    required
-                    value="{{ [dest?.address] }}"
-                    />
-                </div>
+        >
+        <form [formGroup]="addJourneyForm">
+            <div id="journey-form-header">
+                <h3 id="form-title">Planifiez votre trajet</h3>
+                <button id="close-form" class="menu-button" title="Close" (click)="onClose()"></button>
             </div>
-            <input type="button" class="menu-button" id="search-journey" title="Search" (click)="toggleSearch()" />
-        </div>
+
+            <div id="journey-content-container">
+                <div id="journey-inputs-container">
+                    <div class="form-journey-group">
+                        <input
+                        type="text"
+                        id="journey-origin"
+                        formControlName="origin"
+                        placeholder="Départ (choisissez un marqueur ou entrez une adresse)"
+                        required
+                        value="{{ [origin] }}"
+                        />
+                    </div>
+                    
+                    <div class="form-journey-group">
+                        <input
+                        type="text"
+                        id="journey-dest"
+                        formControlName="dest"
+                        placeholder="Arrivée (choisissez un marqueur ou entrez une adresse)"
+                        required
+                        value="{{ [dest] }}"
+                        />
+                    </div>
+                </div>
+                <input type="button" class="menu-button" id="search-journey" title="Search" (click)="toggleSearch()" />
+            </div>
+        </form>
 
         <div id="results">
             <div *ngFor="let result of results" class="result-elem" tabindex="1">
@@ -99,5 +101,5 @@
                 </div>
             </div>
         </div>
-    </form>
+    </div>
 </div>
